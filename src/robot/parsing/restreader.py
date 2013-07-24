@@ -52,5 +52,4 @@ def RestReader():
             os.close(filedesc)
             publish_cmdline(writer_name='html', argv=[rstpath, htmlpath])
             return htmlpath
-
     return RestReader()
