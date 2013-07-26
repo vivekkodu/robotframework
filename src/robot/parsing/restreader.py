@@ -79,28 +79,3 @@ def RestReader():
             return htmlpath
 
     return RestReader()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
