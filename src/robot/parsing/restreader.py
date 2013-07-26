@@ -14,16 +14,15 @@
 
 import tempfile
 import os
-
 from robot.errors import DataError
-
 from .htmlreader import HtmlReader
-
+from .txtreader import TxtReader
 
 def RestReader():
     try:
         from docutils.core import publish_cmdline
         from docutils.parsers.rst import directives
+        import docutils.core
     except ImportError:
         raise DataError("Using reStructuredText test data requires having "
                         "'docutils' module installed.")
@@ -37,15 +36,41 @@ def RestReader():
     class RestReader(HtmlReader):
 
         def read(self, rstfile, rawdata):
-            htmlpath = self._rest_to_html(rstfile.name)
-            htmlfile = None
-            try:
-                htmlfile = open(htmlpath, 'rb')
-                return HtmlReader.read(self, htmlfile, rawdata)
-            finally:
-                if htmlfile:
-                    htmlfile.close()
-                os.remove(htmlpath)
+            doctree = docutils.core.publish_doctree(rstfile.read())
+
+            def collect_robot_nodes(node, collected = []):
+                robot_tagname = 'literal_block'
+                robot_classes = ['code', 'robotframework']
+                is_robot_node = (
+                    node.tagname == robot_tagname
+                    and node.attributes.get('classes') == robot_classes
+                )
+                if is_robot_node:
+                    collected.append(node)
+                else:
+                    for node in node.children:
+                        collected = collect_robot_nodes(node, collected)
+                return collected
+
+            robot_nodes = collect_robot_nodes(doctree)
+
+            if robot_nodes:
+                robot_data = "\n\n".join([node.rawsource for node in robot_nodes])
+                txtfile = tempfile.NamedTemporaryFile()
+                txtfile.write(robot_data)
+                txtfile.seek(0)
+                txtreader = TxtReader()
+                txtreader.read(txtfile, rawdata)
+            else:
+                htmlpath = self._rest_to_html(rstfile.name)
+                htmlfile = None
+                try:
+                    htmlfile = open(htmlpath, 'rb')
+                    return HtmlReader.read(self, htmlfile, rawdata)
+                finally:
+                    if htmlfile:
+                        htmlfile.close()
+                    os.remove(htmlpath)
 
         def _rest_to_html(self, rstpath):
             filedesc, htmlpath = tempfile.mkstemp('.html')
