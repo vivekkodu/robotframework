@@ -56,11 +56,15 @@ def RestReader():
 
             if robot_nodes:
                 robot_data = "\n\n".join([node.rawsource for node in robot_nodes])
-                txtfile = tempfile.NamedTemporaryFile()
-                txtfile.write(robot_data)
-                txtfile.seek(0)
-                txtreader = TxtReader()
-                txtreader.read(txtfile, rawdata)
+                try:
+                    txtfile = tempfile.NamedTemporaryFile()
+                    txtfile.write(robot_data)
+                    txtfile.seek(0)
+                    txtreader = TxtReader()
+                    txtreader.read(txtfile, rawdata)
+                finally:
+                    if txtfile:
+                        txtfile.close()
             else:
                 htmlpath = self._rest_to_html(rstfile.name)
                 htmlfile = None
