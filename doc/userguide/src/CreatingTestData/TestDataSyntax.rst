@@ -404,6 +404,18 @@ of the table::
     \             Directory Should Exist  ${path}
     ============  ======================  ============  ==========
 
+Apart from writing the test cases in reStructuredText documents in reST format, 
+user can write the test cases in space separated format also. For writing test
+case in space separated format, ".. code:: robotframework" should be mentioned
+to indicate that the test case is starting. The actual test case would start 
+from the next line with proper indentation.
+
+..Note:: If the reStructuredText document contains space separated test cases, 
+         Pygment needs to be installed in the working environment.
+
+The actual test case can  be written in a manner similar to shown earlier(in space 
+separated format). Also same escaping rule needs to be followed.
+
 Editing test data
 `````````````````
 
@@ -416,13 +428,16 @@ files.
 Temporary files when using reST
 ```````````````````````````````
 
-Unlike other formats, Robot Framework does not parse reST files
-directly.  Instead, docutils is used to automatically transform reST
-source files into temporary HTML files that are subsequently read by
-Robot. These temporary files are removed immediately after being
+Depending on the type of test case used, different method is followed
+to parse the reST file.In case it contains reST format test cases,
+docutils is used to automatically transform reST source files into 
+temporary HTML files that are subsequently read by Robot. 
+These temporary files are removed immediately after being
 read. This HTML file generation and cleanup is handled internally by
 Robot Framework, it does not require the user to directly invoke
-docutils tools.
+docutils tools. For the simple robot testcases, docutils is used to create 
+a doctree, from which test cases are separated out in a temporary file,
+which is removed after the test cases have been run by robot.
 
 Generating HTML files based on reST files every time tests are run obviously
 adds some overhead. If this is a problem, it can be a good idea to convert
