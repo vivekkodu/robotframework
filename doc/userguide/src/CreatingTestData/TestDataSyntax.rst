@@ -415,6 +415,22 @@ from the next line with proper indentation.
 
 The actual test case can  be written in a manner similar to shown earlier(in space 
 separated format). Also same escaping rule needs to be followed.
+For eg:
+
+.. code:: robotframework
+
+      *** Settings ***
+
+      Library  Selenium2Library
+
+      Test Setup  Open browser  about:  browser=firefox
+      Test Teardown  Close all browsers
+
+      *** Test Cases ***
+
+      Plone.org is up
+         Go to  http://www.plone.org/
+         Capture page screenshot  plone-org.png
 
 Editing test data
 `````````````````
