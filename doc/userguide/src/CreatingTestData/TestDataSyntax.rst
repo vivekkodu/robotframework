@@ -417,7 +417,7 @@ The actual test case can  be written in a manner similar to shown earlier(in spa
 separated format). Also same escaping rule needs to be followed.
 For eg:
 
-//.. code:: robotframework
+.. code:: robotframework
 
       *** Settings ***
 
